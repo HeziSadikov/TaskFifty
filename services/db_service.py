@@ -28,8 +28,8 @@ def create_table_if_not_exists():
                 title TEXT,
                 description TEXT,
                 deadline TEXT,
-                priority TEXT,
-                status TEXT,
+                priority INTEGER,
+                status INTEGER,
                 created TEXT,
                 updated TEXT)"""
     )
