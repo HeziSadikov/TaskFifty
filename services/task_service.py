@@ -38,8 +38,15 @@ def add_task():
         "\nPlease enter a date in the future,\n"
         + "formatted as follows:\nhh:mm dd-mm-yy\n",
     )
-    priority = get_prompt("priority", "\nWhat's the priority? ")
-    status = "TODO"
+    priority = get_prompt(
+        "priority",
+        "\nPlease choose the priority:\n"
+        + "\nLOW"
+        + "\nMEDIUM"
+        + "\nHIGH"
+        + "\n\nYour choice: ",
+    )
+    status = 0  # 'TODO' status
 
     try:
         db_instance().cursor.execute(

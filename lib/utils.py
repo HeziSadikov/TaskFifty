@@ -1,6 +1,7 @@
 from datetime import datetime
 import pytz
 import dateutil.tz
+from lib.enums import Priority, Status
 
 
 def get_prompt(field, prompt):
@@ -11,7 +12,7 @@ def get_prompt(field, prompt):
         if not user_input:
             print(f"\nThe {field} can't be empty!\n")
             continue
-        elif not valid_input:
+        elif valid_input == None:
             continue
         else:
             return valid_input
@@ -42,17 +43,19 @@ def valid_prompt(field, user_input):
 
     elif field == "priority":
         user_input = user_input.upper()
-        if user_input not in ["HIGH", "MEDIUM", "LOW"]:
+        hashed_input = Priority[user_input].value
+        if hashed_input not in [0, 1, 2]:
             print(
-                "\nPriority can only be: High, Medium or Low.\n" + "Please try again.\n"
+                "\nPriority can only be: High, Medium or Low.\n" + "Please try again."
             )
             return None
         else:
-            return user_input
+            return hashed_input
 
     elif field == "status":
         user_input = user_input.upper()
-        if user_input not in ["TODO", "DONE"]:
+        hashed_input = Status[user_input].value
+        if hashed_input not in ["TODO", "DONE"]:
             print("\nYou can only choose to mark a task as DONE/TODO\n")
             return None
-        return user_input
+        return hashed_input
