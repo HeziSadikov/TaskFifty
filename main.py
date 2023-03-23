@@ -4,7 +4,6 @@ from services.task_service import (
     add_task,
     delete_task,
     update_task,
-    get_prompt,
 )
 
 
@@ -12,8 +11,8 @@ def main():
     db_instance().connect()
     create_table_if_not_exists()
     view_tasks()
-    action_selector()
-    db_instance().close()
+    while True:
+        action_selector()
 
 
 def action_selector():
@@ -22,32 +21,24 @@ def action_selector():
         "2": {"label": "Add a task", "fn": add_task},
         "3": {"label": "Delete a task", "fn": delete_task},
         "4": {"label": "Update a task", "fn": update_task},
+        "5": {"label": "EXIT", "fn": exit_fn},
     }
 
-    while True:
-        print("\nPlease choose the number of the desired action:\n")
-        for k in actions:
-            print(k, ". ", actions[k]["label"], sep="")
+    selected_action = input(
+        "\nPlease choose the number of the desired action:\n\n"
+        + "\n".join(f"""{k}. {actions[k]["label"]}""" for k in actions)
+        + "\n\nYour choice: ",
+    )
 
-        selected_action = input("\nYour choice: ").strip()
+    if selected_action in actions:
+        actions[selected_action]["fn"]()
+    else:
+        print("\nInvalid selection.")
 
-        if selected_action in actions:
-            actions[selected_action]["fn"]()
-        else:
-            print("\nInvalid selection.")
-            continue
 
-        while True:
-            answer = get_prompt(
-                "answer", "\nDo you wish to do anything else? (y/n) "
-            ).lower()
-
-            if answer == "y":
-                break
-            elif answer == "n":
-                return
-            else:
-                print("\nInvalid answer.")
+def exit_fn():
+    db_instance().close()
+    exit()
 
 
 if __name__ == "__main__":
