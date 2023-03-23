@@ -2,12 +2,11 @@ from enum import Enum, auto
 
 
 class Priority(Enum):
-    LOW = 0
-    MEDIUM = 1
-    HIGH = 2
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
 
 
 class Status(Enum):
-    TODO = 0
-    DONE = 1
-    LATE = 2
+    TODO = 1
+    DONE = 2
