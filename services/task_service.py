@@ -12,18 +12,18 @@ def view_tasks():
                 title,
                 description,
                 strftime('%H:%M, %d-%m-%Y', deadline, 'unixepoch', 'localtime') as deadline,
-                CASE priority
-                    WHEN 1 THEN 'LOW'
-                    WHEN 2 THEN 'MEDIUM'
-                    WHEN 3 THEN 'HIGH'
-                    ELSE 'UNKNOWN'
-                END AS priority,
-                CASE status
-                    WHEN 1 THEN 'TODO'
-                    WHEN 2 THEN 'DONE'
-                    WHEN 3 THEN 'LATE'
-                    ELSE 'UNKNOWN'
-                END AS status,
+            CASE priority
+                WHEN 1 THEN 'LOW'
+                WHEN 2 THEN 'MEDIUM'
+                WHEN 3 THEN 'HIGH'
+                ELSE 'UNKNOWN'
+            END AS priority,
+            CASE status
+                WHEN 1 THEN 'TODO'
+                WHEN 2 THEN 'DONE'
+                WHEN 3 THEN 'LATE'
+                ELSE 'UNKNOWN'
+            END AS status,
                 strftime('%H:%M:%S, %d-%m-%Y', created, 'unixepoch', 'localtime') as created,
                 strftime('%H:%M:%S, %d-%m-%Y', updated, 'unixepoch', 'localtime') as updated
             FROM tasks"""
