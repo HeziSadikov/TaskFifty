@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytz
 import dateutil.tz
-from lib.enums import Priority, Status
+from lib.enums import Priority, Status, Column
 from services.db_service import db_instance
 
 
@@ -34,6 +34,9 @@ def validate_prompt(field, user_input):
 
     elif field == "task id":
         return validate_task_id(user_input)
+
+    elif field == "column":
+        return validate_enum(user_input, Column)
 
     else:
         print(f"{field} is not a valid field.")
@@ -77,16 +80,21 @@ def validate_enum(user_input, input_enum):
 
 
 def validate_task_id(user_input):
+    from services.task_service import view_tasks
+
     try:
         result = db_instance().cursor.execute(
             "SELECT * FROM tasks WHERE id = ?", (int(user_input),)
         )
-        if result.fetchone() is not None:
-            return int(user_input)
-        else:
+
+        if result.fetchone() is None:
             raise ValueError
+
+        return int(user_input)
+
     except ValueError:
-        print("\nInvalid id")
+        print("\nInvalid id.")
+        view_tasks()
         return None
 
 
