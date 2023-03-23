@@ -1,0 +1,7 @@
+taskstest.db
+__pycache__/
+.vscode/
+.\servies\__pycache__
+.\lib\__pycache__
+\.idea
+test.py
