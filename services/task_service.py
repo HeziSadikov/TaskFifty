@@ -50,9 +50,10 @@ def add_task():
 
     try:
         db_instance().cursor.execute(
-            """INSERT INTO tasks 
-                    (title, description, deadline, priority, status, created, updated) 
-                VALUES 
+            """INSERT INTO tasks
+                    (title, description, deadline,
+                     priority, status, created, updated)
+                VALUES
                     (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))
                     """,
             (title, description, deadline, priority, status),
@@ -75,7 +76,8 @@ def delete_task():
 
 
 def update_task():
-    allowed_columns = ["title", "description", "deadline", "priority", "status"]
+    allowed_columns = ["title", "description",
+                       "deadline", "priority", "status"]
     while True:
         view_tasks()
 
@@ -91,6 +93,7 @@ def update_task():
             break
 
         updated_column = get_prompt(column, f"Enter the new {column}: ")
+        update_field(id_to_update, column, updated_column)
 
         try:
             db_instance().cursor.execute(
@@ -104,3 +107,17 @@ def update_task():
         except:
             print("ERROR")
             db_instance().conn.rollback()
+
+
+def update_field(id, column, newValue):
+    try:
+        db_instance().cursor.execute(
+            f"""UPDATE tasks
+                SET {column} = ?, updated = strftime('%s', 'now')
+                WHERE id = ?;""",
+            (newValue, id),
+        )
+        return
+    except:
+        print("ERROR")
+        db_instance().conn.rollback()
