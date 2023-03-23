@@ -1,6 +1,7 @@
-from services.db_service import db_instance
 from prettytable import from_db_cursor
+from services.db_service import db_instance
 from lib.utils import get_prompt
+from lib.enums import Priority, Status
 
 
 def view_tasks():
@@ -11,15 +12,15 @@ def view_tasks():
                 description,
                 strftime('%H:%M:%S, %d-%m-%Y', deadline, 'localtime') as deadline,
                 CASE priority
-                    WHEN 0 THEN 'LOW'
-                    WHEN 1 THEN 'MEDIUM'
-                    WHEN 2 THEN 'HIGH'
+                    WHEN 1 THEN 'LOW'
+                    WHEN 2 THEN 'MEDIUM'
+                    WHEN 3 THEN 'HIGH'
                     ELSE 'UNKNOWN'
                 END AS priority,
                 CASE status
-                    WHEN 0 THEN 'TODO'
-                    WHEN 1 THEN 'DONE'
-                    WHEN 2 THEN 'LATE'
+                    WHEN 1 THEN 'TODO'
+                    WHEN 2 THEN 'DONE'
+                    WHEN 3 THEN 'LATE'
                     ELSE 'UNKNOWN'
                 END AS status,
                 strftime('%H:%M:%S, %d-%m-%Y', created, 'localtime') as created,
@@ -40,13 +41,11 @@ def add_task():
     )
     priority = get_prompt(
         "priority",
-        "\nPlease choose the priority:\n"
-        + "\nLOW"
-        + "\nMEDIUM"
-        + "\nHIGH"
+        "\nPlease choose the priority:\n\n"
+        + "\n".join(f"{p.value}. {p.name}" for p in Priority)
         + "\n\nYour choice: ",
     )
-    status = 0  # 'TODO' status
+    status = Status.TODO.value
 
     try:
         db_instance().cursor.execute(
