@@ -47,7 +47,7 @@ def action_selector():
             elif answer == "n":
                 return
             else:
-                print("\nInvalid answer")
+                print("\nInvalid answer.")
 
 
 if __name__ == "__main__":
