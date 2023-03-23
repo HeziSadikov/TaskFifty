@@ -32,6 +32,9 @@ def validate_prompt(field, user_input):
     elif field == "status":
         return validate_enum(user_input, Status)
 
+    elif field == "task id":
+        return validate_task_id(user_input)
+
     else:
         print(f"{field} is not a valid field.")
         return None
@@ -71,6 +74,20 @@ def validate_enum(user_input, input_enum):
 
     print("\nInvalid choice.")
     return None
+
+
+def validate_task_id(user_input):
+    try:
+        result = db_instance().cursor.execute(
+            "SELECT * FROM tasks WHERE id = ?", (int(user_input),)
+        )
+        if result.fetchone() is not None:
+            return int(user_input)
+        else:
+            raise ValueError
+    except ValueError:
+        print("\nInvalid id")
+        return None
 
 
 def update_status_if_late():

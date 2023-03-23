@@ -79,7 +79,9 @@ def update_task():
     while True:
         view_tasks()
 
-        id_to_update = input("\nPlease type the id of the task you wish to update: ")
+        id_to_update = get_prompt(
+            "task id", "\nPlease type the id of the task you wish to update: "
+        )
 
         while True:
             column = input("In which column? ")
