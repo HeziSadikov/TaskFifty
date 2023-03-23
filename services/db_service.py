@@ -27,9 +27,9 @@ def create_table_if_not_exists():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT,
                 description TEXT,
-                deadline TEXT,
+                deadline INTEGER,
                 priority INTEGER,
                 status INTEGER,
-                created TEXT,
-                updated TEXT)"""
+                created INTEGER,
+                updated INTEGER)"""
     )

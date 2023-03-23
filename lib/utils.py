@@ -2,6 +2,7 @@ from datetime import datetime
 import pytz
 import dateutil.tz
 from lib.enums import Priority, Status
+from services.db_service import db_instance
 
 
 def get_prompt(field, prompt):
@@ -50,7 +51,7 @@ def validate_deadline(user_input):
         input_datetime = input_datetime.replace(tzinfo=local_timezone)
         utc_datetime = input_datetime.astimezone(pytz.utc)
 
-        return utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        return utc_datetime.timestamp()
 
     except ValueError:
         print("\nInvalid format, please try again.")
@@ -70,3 +71,18 @@ def validate_enum(user_input, input_enum):
 
     print("\nInvalid choice.")
     return None
+
+
+def update_status_if_late():
+    # only look at tasks that are in TODO status
+    # if today > deadline, change status to LATE
+
+    today = datetime.now().timestamp()
+
+    db_instance().cursor.execute(
+        f"""UPDATE tasks
+            SET status = 3
+            WHERE id IN
+            (SELECT id FROM tasks 
+            WHERE status = 1 AND deadline < {today})"""
+    )

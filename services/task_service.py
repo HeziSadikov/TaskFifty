@@ -1,16 +1,17 @@
 from prettytable import from_db_cursor
 from services.db_service import db_instance
-from lib.utils import get_prompt
+from lib.utils import get_prompt, update_status_if_late
 from lib.enums import Priority, Status
 
 
 def view_tasks():
+    update_status_if_late()
     db_instance().cursor.execute(
         """SELECT
                 id,
                 title,
                 description,
-                strftime('%H:%M:%S, %d-%m-%Y', deadline, 'localtime') as deadline,
+                strftime('%H:%M, %d-%m-%Y', deadline, 'unixepoch', 'localtime') as deadline,
                 CASE priority
                     WHEN 1 THEN 'LOW'
                     WHEN 2 THEN 'MEDIUM'
@@ -23,8 +24,8 @@ def view_tasks():
                     WHEN 3 THEN 'LATE'
                     ELSE 'UNKNOWN'
                 END AS status,
-                strftime('%H:%M:%S, %d-%m-%Y', created, 'localtime') as created,
-                strftime('%H:%M:%S, %d-%m-%Y', updated, 'localtime') as updated
+                strftime('%H:%M:%S, %d-%m-%Y', created, 'unixepoch', 'localtime') as created,
+                strftime('%H:%M:%S, %d-%m-%Y', updated, 'unixepoch', 'localtime') as updated
             FROM tasks"""
     )
     pretty_formatted_table = from_db_cursor(db_instance().cursor)
@@ -52,7 +53,7 @@ def add_task():
             """INSERT INTO tasks 
                     (title, description, deadline, priority, status, created, updated) 
                 VALUES 
-                    (?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+                    (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))
                     """,
             (title, description, deadline, priority, status),
         )
@@ -92,8 +93,8 @@ def update_task():
         try:
             db_instance().cursor.execute(
                 f"""UPDATE tasks
-                        SET {column} = ?, updated = datetime('now')
-                        WHERE id = ?;""",
+                    SET {column} = ?, updated = strftime('%s', 'now')
+                    WHERE id = ?;""",
                 (updated_column, id_to_update),
             )
             return
