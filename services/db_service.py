@@ -23,13 +23,14 @@ def db_instance():
 
 def create_table_if_not_exists():
     db.cursor.execute(
-        """CREATE TABLE IF NOT EXISTS tasks(
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title TEXT,
-                description TEXT,
-                deadline INTEGER,
-                priority INTEGER,
-                status INTEGER,
-                created INTEGER,
-                updated INTEGER)"""
+        """
+        CREATE TABLE IF NOT EXISTS tasks(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            description TEXT,
+            deadline INTEGER,
+            priority INTEGER,
+            status INTEGER,
+            created INTEGER,
+            updated INTEGER)"""
     )
