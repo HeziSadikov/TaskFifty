@@ -17,10 +17,6 @@ class DB:
 db = DB()
 
 
-def db_instance():
-    return db
-
-
 def create_table_if_not_exists():
     db.cursor.execute(
         """

@@ -2,7 +2,7 @@ from datetime import datetime
 import pytz
 import dateutil.tz
 from lib.enums import Priority, Status, Column
-from services.db_service import db_instance
+from services.db_service import db
 
 
 def get_prompt(field, prompt):
@@ -20,7 +20,7 @@ def get_prompt(field, prompt):
 
 
 def validate_prompt(field, user_input):
-    if field in ["title", "description", "answer"]:
+    if field in ["title", "description"]:
         return user_input
 
     elif field == "deadline":
@@ -83,7 +83,7 @@ def validate_task_id(user_input):
     from services.task_service import view_tasks
 
     try:
-        result = db_instance().cursor.execute(
+        result = db.cursor.execute(
             "SELECT * FROM tasks WHERE id = ?", (int(user_input),)
         )
 
@@ -104,7 +104,7 @@ def update_status_if_late():
 
     today = datetime.now().timestamp()
 
-    db_instance().cursor.execute(
+    db.cursor.execute(
         f"""UPDATE tasks
             SET status = 3
             WHERE id IN

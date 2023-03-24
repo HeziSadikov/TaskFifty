@@ -1,12 +1,12 @@
 from prettytable import from_db_cursor
-from services.db_service import db_instance
 from lib.utils import get_prompt, update_status_if_late
 from lib.enums import Priority, Status, Column
+from services.db_service import db
 
 
 def view_tasks():
     update_status_if_late()
-    db_instance().cursor.execute(
+    db.cursor.execute(
         """
         SELECT
             id,
@@ -29,7 +29,7 @@ def view_tasks():
         strftime('%H:%M:%S, %d-%m-%Y', updated, 'unixepoch', 'localtime') as updated
         FROM tasks"""
     )
-    pretty_formatted_table = from_db_cursor(db_instance().cursor)
+    pretty_formatted_table = from_db_cursor(db.cursor)
     print("\n", pretty_formatted_table, sep="")
 
 
@@ -49,17 +49,19 @@ def add_task():
     )
     status = Status.TODO.value
 
-    try:
-        db_instance().cursor.execute(
-            """INSERT INTO tasks 
-                    (title, description, deadline, priority, status, created, updated) 
-                VALUES 
-                    (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))
-                    """,
-            (title, description, deadline, priority, status),
-        )
-    except:
-        db_instance().conn.rollback()
+    # try:
+    db.cursor.execute(
+        """
+        INSERT INTO tasks 
+            (title, description, deadline, priority, status, created, updated) 
+        VALUES 
+            (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))
+            """,
+        (title, description, deadline, priority, status),
+    )
+    # except:
+    #     print("add_task error")
+    #     db.conn.rollback()
 
 
 def delete_task():
@@ -67,7 +69,7 @@ def delete_task():
     id_to_delete = get_prompt(
         "task id", "\nPlease type the id of the task you wish to delete: "
     )
-    db_instance().cursor.execute("DELETE FROM tasks WHERE id = ?", str(id_to_delete))
+    db.cursor.execute("DELETE FROM tasks WHERE id = ?", str(id_to_delete))
 
 
 def update_task():
@@ -91,7 +93,7 @@ def update_task():
     )
 
     try:
-        db_instance().cursor.execute(
+        db.cursor.execute(
             f"""UPDATE tasks
                 SET {chosen_column_name} = ?, updated = strftime('%s', 'now')
                 WHERE id = ?;""",
@@ -101,4 +103,4 @@ def update_task():
 
     except:
         print("ERROR")
-        db_instance().conn.rollback()
+        db.conn.rollback()
