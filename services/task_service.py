@@ -49,23 +49,24 @@ def add_task():
     )
     status = Status.TODO.value
 
-    # try:
-    db.cursor.execute(
-        """
-        INSERT INTO tasks 
-            (title, description, deadline, priority, status, created, updated) 
-        VALUES 
-            (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))
-            """,
-        (title, description, deadline, priority, status),
-    )
-    # except:
-    #     print("add_task error")
-    #     db.conn.rollback()
+    try:
+        db.cursor.execute(
+            """
+            INSERT INTO tasks 
+                (title, description, deadline, priority, status, created, updated) 
+            VALUES 
+                (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))
+                """,
+            (title, description, deadline, priority, status),
+        )
+    except:
+        print("add_task error")
+        db.conn.rollback()
 
 
 def delete_task():
     view_tasks()
+
     id_to_delete = get_prompt(
         "task id", "\nPlease type the id of the task you wish to delete: "
     )
@@ -75,7 +76,7 @@ def delete_task():
 def update_task():
     view_tasks()
 
-    id_to_update = get_prompt(
+    chosen_id = get_prompt(
         "task id", "\nPlease type the id of the task you wish to update: "
     )
 
@@ -86,18 +87,20 @@ def update_task():
         + "\n\nYour choice: ",
     )
 
-    chosen_column_name = Column(chosen_column).name.lower()
+    column_name = Column(chosen_column).name.lower()
 
-    updated_column = get_prompt(
-        chosen_column_name, f"\nEnter the new {chosen_column_name}: "
-    )
+    new_cell = get_prompt(column_name, f"\nEnter the new {column_name}: ")
 
+    update_cell(chosen_id, column_name, new_cell)
+
+
+def update_cell(id, column, cell):
     try:
         db.cursor.execute(
             f"""UPDATE tasks
-                SET {chosen_column_name} = ?, updated = strftime('%s', 'now')
+                SET {column} = ?, updated = strftime('%s', 'now')
                 WHERE id = ?;""",
-            (updated_column, id_to_update),
+            (cell, id),
         )
         return
 
