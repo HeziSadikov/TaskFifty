@@ -1,6 +1,6 @@
 from datetime import datetime
-import pytz
 import dateutil.tz
+import pytz
 from lib.enums import Priority, Status, Column
 from services.db_service import db
 
@@ -99,15 +99,20 @@ def validate_task_id(user_input):
 
 
 def update_status_if_late():
+    from services.task_service import update_cell
+
     # only look at tasks that are in TODO status
     # if today > deadline, change status to LATE
 
     today = datetime.now().timestamp()
 
-    db.cursor.execute(
-        f"""UPDATE tasks
-            SET status = 3
-            WHERE id IN
-            (SELECT id FROM tasks 
-            WHERE status = 1 AND deadline < {today})"""
+    results = db.cursor.execute(
+        f"""
+        SELECT id FROM tasks 
+        WHERE status = 1 
+        AND deadline < {today}"""
     )
+
+    if rows := results.fetchall():
+        for row in rows:
+            update_cell(row[0], "status", 3)
