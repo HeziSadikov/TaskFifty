@@ -1,4 +1,5 @@
 from prettytable import from_db_cursor
+
 from lib.utils import get_prompt, update_status_if_late
 from lib.enums import Priority, Status, Column
 from services.db_service import db
