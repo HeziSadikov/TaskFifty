@@ -90,12 +90,14 @@ def update_task():
         chosen_column_name, f"\nEnter the new {chosen_column_name}: "
     )
 
+
+def update_column_value(id, column, newValue):
     try:
         db_instance().cursor.execute(
             f"""UPDATE tasks
-                SET {chosen_column_name} = ?, updated = strftime('%s', 'now')
+                SET {column} = ?, updated = strftime('%s', 'now')
                 WHERE id = ?;""",
-            (updated_column, id_to_update),
+            (newValue, id),
         )
         return
 
