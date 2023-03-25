@@ -27,7 +27,7 @@ def get_enum(enum):
         "column": Column,
     }
 
-    if type(enum) == str:
+    if type(enum) is str:
         enum = enums[enum]
 
     while True:
