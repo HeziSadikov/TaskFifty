@@ -2,6 +2,7 @@ from prettytable import from_db_cursor
 
 from lib.utils import get_prompt, update_status_if_late
 from lib.enums import Priority, Status, Column
+from lib.get_datetime import get_datetime
 from services.db_service import db
 
 
@@ -37,11 +38,7 @@ def view_tasks():
 def add_task():
     title = get_prompt("title", "\nPlease choose a title: ")
     description = get_prompt("description", "\nPlease describe your task: ")
-    deadline = get_prompt(
-        "deadline",
-        "\nPlease enter a date in the future,\n"
-        + "formatted as follows:\nhh:mm dd-mm-yy\n",
-    )
+    deadline = get_datetime("deadline")
     priority = get_prompt(
         "priority",
         "\nPlease choose the priority:\n\n"
@@ -90,7 +87,7 @@ def update_task():
 
     column_name = Column(chosen_column).name.lower()
 
-    new_cell = get_prompt(column_name, f"\nEnter the new {column_name}: ")
+    new_cell = get_prompt(column_name)
 
     update_cell(chosen_id, column_name, new_cell)
 
