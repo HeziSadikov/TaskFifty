@@ -53,9 +53,9 @@ def add_task():
     try:
         db.cursor.execute(
             """
-            INSERT INTO tasks 
+            INSERT INTO tasks
                 (title, description, deadline, priority, status, created, updated) 
-            VALUES 
+            VALUES
                 (?, ?, ?, ?, ?, strftime('%s', 'now'), strftime('%s', 'now'))
                 """,
             (title, description, deadline, priority, status),
