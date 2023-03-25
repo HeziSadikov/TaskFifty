@@ -1,21 +1,19 @@
 from datetime import datetime
 
-from lib.enums import Priority, Status, Column
 from lib.get_datetime import get_datetime
 from services.db_service import db
+from lib.enums import Priority, Column, Status, get_enum
 
 
 def get_prompt(field, prompt=None):
     while True:
-        if prompt is not None:
-            user_input = input(prompt).strip()
-            if not user_input:
+        if prompt is None:
+            valid_input = validate_prompt(field)
+        else:
+            if not (user_input := input(prompt).strip()):
                 print(f"\nThe {field} can't be empty!\n")
                 continue
-        else:
-            user_input = None
-
-        valid_input = validate_prompt(field, user_input)
+            valid_input = validate_prompt(field, user_input)
 
         if valid_input is None:
             continue
@@ -27,39 +25,18 @@ def validate_prompt(field, user_input=None):
     if field in ["title", "description"]:
         return user_input
 
+    elif field in ["priority", "status", "column"]:
+        return get_enum(field)
+
     elif field == "deadline":
         return get_datetime("deadline")
 
-    elif field == "priority":
-        return validate_enum(user_input, Priority)
-
-    elif field == "status":
-        return validate_enum(user_input, Status)
-
-    elif field == "task id":
+    elif field == "id":
         return validate_task_id(user_input)
-
-    elif field == "column":
-        return validate_enum(user_input, Column)
 
     else:
         print(f"{field} is not a valid field.")
         return None
-
-
-def validate_enum(user_input, input_enum):
-    try:
-        return input_enum(int(user_input)).value
-    except ValueError:
-        pass
-
-    try:
-        return input_enum[user_input.upper()].value
-    except KeyError:
-        pass
-
-    print("\nInvalid choice.")
-    return None
 
 
 def validate_task_id(user_input):

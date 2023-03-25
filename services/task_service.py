@@ -1,7 +1,7 @@
 from prettytable import from_db_cursor
 
 from lib.utils import get_prompt, update_status_if_late
-from lib.enums import Priority, Status, Column
+from lib.enums import Priority, Status, Column, get_enum
 from lib.get_datetime import get_datetime
 from services.db_service import db
 
@@ -39,12 +39,7 @@ def add_task():
     title = get_prompt("title", "\nPlease choose a title: ")
     description = get_prompt("description", "\nPlease describe your task: ")
     deadline = get_datetime("deadline")
-    priority = get_prompt(
-        "priority",
-        "\nPlease choose the priority:\n\n"
-        + "\n".join(f"{p.value}. {p.name}" for p in Priority)
-        + "\n\nYour choice: ",
-    )
+    priority = get_enum(Priority)
     status = Status.TODO.value
 
     try:
@@ -75,15 +70,10 @@ def update_task():
     view_tasks()
 
     chosen_id = get_prompt(
-        "task id", "\nPlease type the id of the task you wish to update: "
+        "id", "\nPlease type the id of the task you wish to update: "
     )
 
-    chosen_column = get_prompt(
-        "column",
-        "\nPlease choose a column:\n\n"
-        + "\n".join(f"{c.value}. {c.name.title()}" for c in Column)
-        + "\n\nYour choice: ",
-    )
+    chosen_column = get_enum(Column)
 
     column_name = Column(chosen_column).name.lower()
 

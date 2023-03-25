@@ -7,7 +7,11 @@ import pytz
 
 def get_datetime(date_kind):
     while True:
-        print("\nPlease enter a valid time & date in the future:")
+        if date_kind == "deadline":
+            print("\nPlease enter a deadline:")
+        else:
+            print("\nPlease enter a valid time & date:")
+
         hour = get_datetime_part("hour")
         minute = get_datetime_part("minute")
         day = get_datetime_part("day")
@@ -17,17 +21,18 @@ def get_datetime(date_kind):
         user_input = f"{hour}:{minute} {day}-{month}-{year}"
 
         try:
-            local_datetime_obj = datetime.strptime(user_input, "%H:%M %d-%m-%Y")
+            local_datetime = datetime.strptime(user_input, "%H:%M %d-%m-%Y")
         except ValueError:
             print("\nInvalid date time, please try again.\n")
             continue
 
-        if date_kind == "deadline" and not validate_deadline(local_datetime_obj):
+        if date_kind == "deadline" and not validate_deadline(local_datetime):
+            print("\nThe deadline must be a valid time in the future.")
             continue
 
         local_timezone = dateutil.tz.tzlocal()
-        local_datetime_obj = local_datetime_obj.replace(tzinfo=local_timezone)
-        utc_datetime = local_datetime_obj.astimezone(pytz.utc)
+        local_datetime = local_datetime.replace(tzinfo=local_timezone)
+        utc_datetime = local_datetime.astimezone(pytz.utc)
 
         return utc_datetime.timestamp()
 
@@ -41,14 +46,10 @@ def get_datetime_part(datetime_part):
         "year": {"pattern": r"^((?:19|20)[0-9][0-9])$", "str": "1900 and 2099"},
     }
     while True:
-        try:
-            part = input(f"{datetime_part.title()}: ").strip()
-            if matches := re.search(range[datetime_part]["pattern"], part):
-                pass
-            else:
-                raise ValueError
+        part = input(f"{datetime_part.title()}: ").strip()
+        if matches := re.search(range[datetime_part]["pattern"], part):
             return part
-        except ValueError:
+        else:
             print(
                 f"""\nThe {datetime_part} must be an integer between {range[datetime_part]["str"]}.\n"""
             )
