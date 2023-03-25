@@ -15,7 +15,7 @@ def get_prompt(field, prompt):
         if not user_input:
             print(f"\nThe {field} can't be empty!\n")
             continue
-        elif valid_input == None:
+        elif valid_input is None:
             continue
         else:
             return valid_input
@@ -110,8 +110,8 @@ def update_status_if_late():
 
     results = db.cursor.execute(
         f"""
-        SELECT id FROM tasks 
-        WHERE status = 1 
+        SELECT id FROM tasks
+        WHERE status = 1
         AND deadline < {today}"""
     )
 
