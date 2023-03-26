@@ -22,21 +22,18 @@ def get_prompt(field, prompt=None):
 
 
 def validate_prompt(field, user_input=None):
-    if field in ["title", "description"]:
-        return user_input
-
-    elif field in ["priority", "status", "column"]:
-        return get_enum(field)
-
-    elif field == "deadline":
-        return get_datetime("deadline")
-
-    elif field == "id":
-        return validate_task_id(user_input)
-
-    else:
-        print(f"{field} is not a valid field.")
-        return None
+    match field:
+        case "title" | "description":
+            return user_input
+        case "priority" | "status" | "column":
+            return get_enum(field)
+        case "deadline":
+            return get_datetime("deadline")
+        case "id":
+            return validate_task_id(user_input)
+        case _:
+            print(f"{field} is not a valid field")
+            return None
 
 
 def validate_task_id(user_input):
