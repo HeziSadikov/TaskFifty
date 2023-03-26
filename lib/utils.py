@@ -25,7 +25,7 @@ def validate_prompt(field, prompt):
         case "id":
             return validate_task_id(get_text(field, prompt))
         case _:
-            print(f"{field} is not a valid field")
+            print(f"\n{field} is not a valid field")
             return None
 
 
@@ -44,6 +44,7 @@ def validate_task_id(user_input):
         result = db.cursor.execute("SELECT id FROM tasks WHERE id = ?", (user_input,))
         if result.fetchone() is not None:
             return user_input
+        raise ValueError
     except ValueError:
         view_tasks()
         return None

@@ -34,7 +34,6 @@ def action_selector():
             actions[selected_action]["fn"]()
         else:
             print("\nInvalid selection.")
-            return
 
 
 def exit_fn():
