@@ -7,50 +7,44 @@ from services.db_service import db
 
 def get_prompt(field, prompt=None):
     while True:
-        if prompt is None:
-            valid_input = validate_prompt(field)
-        else:
-            if not (user_input := input(prompt).strip()):
-                print(f"\nThe {field} can't be empty!\n")
-                continue
-            valid_input = validate_prompt(field, user_input)
-
-        if valid_input is None:
+        if not (valid_input := validate_prompt(field, prompt)):
+            print(f"\nInvalid {field}.")
             continue
         else:
             return valid_input
 
 
-def validate_prompt(field, user_input=None):
+def validate_prompt(field, prompt):
     match field:
         case "title" | "description":
-            return user_input
+            return get_text(field, prompt)
         case "priority" | "status" | "column":
             return get_enum(field)
         case "deadline":
             return get_datetime("deadline")
         case "id":
-            return validate_task_id(user_input)
+            return validate_task_id(get_text(field, prompt))
         case _:
             print(f"{field} is not a valid field")
             return None
+
+
+def get_text(field, prompt=None):
+    if prompt is None:
+        return input(f"\nPlease choose the {field}: ").strip()
+    else:
+        return input(prompt).strip()
 
 
 def validate_task_id(user_input):
     from services.task_service import view_tasks
 
     try:
-        result = db.cursor.execute(
-            "SELECT * FROM tasks WHERE id = ?", (int(user_input),)
-        )
-
-        if result.fetchone() is None:
-            raise ValueError
-
-        return int(user_input)
-
+        user_input = int(user_input)
+        result = db.cursor.execute("SELECT id FROM tasks WHERE id = ?", (user_input,))
+        if result.fetchone() is not None:
+            return user_input
     except ValueError:
-        print("\nInvalid id.")
         view_tasks()
         return None
 
