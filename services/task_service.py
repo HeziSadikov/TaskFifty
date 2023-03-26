@@ -72,14 +72,10 @@ def update_task():
     chosen_id = get_prompt(
         "id", "\nPlease type the id of the task you wish to update: "
     )
+    chosen_column = Column(get_enum(Column)).name.lower()
+    new_cell = get_prompt(chosen_column)
 
-    chosen_column = get_enum(Column)
-
-    column_name = Column(chosen_column).name.lower()
-
-    new_cell = get_prompt(column_name)
-
-    update_cell(chosen_id, column_name, new_cell)
+    update_cell(chosen_id, chosen_column, new_cell)
 
 
 def update_cell(id, column, cell):
