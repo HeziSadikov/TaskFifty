@@ -14,21 +14,21 @@ def view_tasks():
             id,
             title,
             description,
-        strftime('%H:%M, %d-%m-%Y', deadline, 'unixepoch', 'localtime') as deadline,
-        CASE priority
-            WHEN 1 THEN 'LOW'
-            WHEN 2 THEN 'MEDIUM'
-            WHEN 3 THEN 'HIGH'
-            ELSE 'UNKNOWN'
-        END AS priority,
-        CASE status
-            WHEN 1 THEN 'TODO'
-            WHEN 2 THEN 'DONE'
-            WHEN 3 THEN 'LATE'
-            ELSE 'UNKNOWN'
-        END AS status,
-        strftime('%H:%M:%S, %d-%m-%Y', created, 'unixepoch', 'localtime') as created,
-        strftime('%H:%M:%S, %d-%m-%Y', updated, 'unixepoch', 'localtime') as updated
+            strftime('%H:%M, %d-%m-%Y', deadline, 'unixepoch', 'localtime') AS deadline,
+            CASE priority
+                WHEN 1 THEN 'LOW'
+                WHEN 2 THEN 'MEDIUM'
+                WHEN 3 THEN 'HIGH'
+                ELSE 'UNKNOWN'
+            END AS priority,
+            CASE status
+                WHEN 1 THEN 'TODO'
+                WHEN 2 THEN 'DONE'
+                WHEN 3 THEN 'LATE'
+                ELSE 'UNKNOWN'
+            END AS status,
+            strftime('%H:%M:%S, %d-%m-%Y', created, 'unixepoch', 'localtime') AS created,
+            strftime('%H:%M:%S, %d-%m-%Y', updated, 'unixepoch', 'localtime') AS updated
         FROM tasks"""
     )
     pretty_formatted_table = from_db_cursor(db.cursor)
@@ -61,9 +61,9 @@ def delete_task():
     view_tasks()
 
     id_to_delete = get_prompt(
-        "task id", "\nPlease type the id of the task you wish to delete: "
+        "id", "\nPlease type the id of the task you wish to delete: "
     )
-    db.cursor.execute("DELETE FROM tasks WHERE id = ?", str(id_to_delete))
+    db.cursor.execute("DELETE FROM tasks WHERE id = ?", (id_to_delete,))
 
 
 def update_task():
